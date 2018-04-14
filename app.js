@@ -9,100 +9,97 @@ Game Functions:
 
 // Game Values
 
-let max  = 10,
-    min = 1,
-    winningNum = randomNum(min, max),
-    guessesLeft = 3;
-    
-
+let   min = 1,
+      max = 10,
+      winningNum = 2,
+      guessLeft = 3;
 
 // Get the UI elements
 
-const game = document.querySelector('#game');
-const minNum = document.querySelector('.min-num');
-const maxNum = document.querySelector('.max-num');
-const guessInput = document.querySelector('#guess-input');
-const guessBtn = document.querySelector('#guess-btn');
-const message = document.querySelector('.message');
+const guessInput = document.querySelector('#guess-input'),
+      guessBtn = document.querySelector('#guess-btn'),
+      message = document.querySelector('.message'),
+      minNum = document.querySelector('.min-num'),
+      maxNum = document.querySelector('.max-num');
 
 
 // add play again listner
 
-game.addEventListener('mousedown', function(e){
+guessBtn.addEventListener('mousedown', function(e){
     if(e.target.classList.contains('play-again')){
-        location.reload()
+        location.reload();
     }
 })
 
 // Assign min and mix
 
-maxNum.textContent = max;
 minNum.textContent = min;
+maxNum.textContent = max;
+
 
 // Listen for guess
 guessBtn.addEventListener('click', function(){
     // Parse the guess  
-    const guess = parseInt(guessInput.value);    
+    const guess = parseInt(guessInput.value);
     // Validate input
     if (isNaN(guess) || guess < min || guess > max){
-        alert('Please enter a number between ' + min + ' and ' + max + '.');
+        setMessage('Please enter a value bewteen ' + min + ' and ' + max + '.', 'red');
     } else {
-         // Game Over - Won
+        // Game Over - Won
          // Check if won
-        if (guess === winningNum){
-            gameOver(true, guess + " is correct! You've WON");
-            
-        } else {
-            // Wrong number
-            guessesLeft -= 1;
-            
-            // Game over - lost 
-            if (guessesLeft === 0){
-                
-             gameOver(false, "You've lost! The correct number was " + winningNum + ".");
+        if(guess === winningNum){
+          gameOver(true, guess + ' is the correct number, YOU WON!');
+           guessInput.disabled = true;
          
-            } else {
-                  // Game continues - wrong answer
-                  // Set message
-                   setMessage(guess + " is incorrect. You've got " + guessesLeft + ".", 'red');
-                  // Set color
-                   guessInput.style.color = 'red';
-                  // Disable input
-                  guessInput.value = '';
-          }
-       }
+        } else {
+           // Wrong number
+           // Game continues - wrong answer
+           guessLeft -= 1;
+           // Set message
+          setMessage(guess + ' is NOT the correct number. You have ' + guessLeft + ' guess left.', 'red');
+           guessInput.value = '';
+        }
+        
+        if (guessLeft === 0){
+           // Game over - lost
+           gameOver(false, guess + ' is NOT the correct number. The correct number was ' + winningNum + '.');
+            guessInput.disabled = true;
+        } 
+        
     }
-});
+         
+})
 
-// Set messsage
 function setMessage(msg, color){
     message.textContent = msg;
+    guessInput.style.borderColor = color;
     message.style.color = color;
-}        
+    
+}
+    
 
+
+// Set messsage
 function gameOver(won, msg){
     let color;
     won === true ? color = 'green' : color = 'red';
-   // Disable input
-    guessInput.disabled = true;
-    // Set color
-    message.style.color = color;
-    // Set border color 
+    
+    message.textContent = msg;
+   
     guessInput.style.borderColor = color;
-    // set message
-    setMessage(msg);
-    // Play again?
+    
+    message.style.color = color;
+    
+    guessBtn.value = 'Play Again?';
+    
     guessBtn.className = 'play-again';
+}
+   
+    // Play again?
+
+
     // Listen for play again class
-    guessBtn.value = 'Play Again?' 
-}
 
-function randomNum(max, min){
-       return Math.floor(Math.random()*(max - min+1)+min);
-}
-
-
-console.log(winningNum)
 
 
 
